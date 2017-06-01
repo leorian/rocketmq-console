@@ -17,29 +17,30 @@
 
 var module = app;
 
-module.controller('messageController', ['$scope', 'ngDialog', '$http','Notification',function ($scope, ngDialog, $http,Notification) {
+module.controller('messageController', ['$scope', 'ngDialog', '$http', 'Notification', function ($scope, ngDialog, $http, Notification) {
     $scope.allTopicList = [];
-    $scope.selectedTopic =[];
-    $scope.key ="";
-    $scope.messageId ="";
-    $scope.queryMessageByTopicResult=[];
-    $scope.queryMessageByTopicAndKeyResult=[];
-    $scope.queryMessageByMessageIdResult={};
+    $scope.selectedTopic = [];
+    $scope.key = "";
+    $scope.messageId = "";
+    $scope.queryMessageByTopicResult = [];
+    $scope.queryMessageByTopicAndKeyResult = [];
+    $scope.queryMessageByMessageIdResult = {};
     $http({
         method: "GET",
         url: "topic/list.query"
     }).success(function (resp) {
-        if(resp.status ==0){
+        if (resp.status == 0) {
             $scope.allTopicList = resp.data.topicList.sort();
             console.log($scope.allTopicList);
-        }else {
+        } else {
             Notification.error({message: resp.errMsg, delay: 2000});
         }
     });
     $scope.timepickerBegin = moment().subtract(1, 'hour').format('YYYY-MM-DD HH:mm');
-    $scope.timepickerEnd = moment().add(1,'hour').format('YYYY-MM-DD HH:mm');
-    $scope.timepickerOptions ={format: 'YYYY-MM-DD HH:mm', showClear: true};
+    $scope.timepickerEnd = moment().add(1, 'hour').format('YYYY-MM-DD HH:mm');
+    $scope.timepickerOptions = {format: 'YYYY-MM-DD HH:mm', showClear: true};
 
+    //分页器
     $scope.paginationConf = {
         currentPage: 1,
         totalItems: 0,
@@ -48,15 +49,15 @@ module.controller('messageController', ['$scope', 'ngDialog', '$http','Notificat
         perPageOptions: [10],
         rememberPerPage: 'perPageItems',
         onChange: function () {
-            $scope.changeShowMessageList(this.currentPage,this.totalItems);
+            $scope.changeShowMessageList(this.currentPage, this.totalItems);
         }
     };
 
 
     $scope.queryMessageByTopic = function () {
         console.log($scope.selectedTopic);
-        console.log($scope.timepickerBegin)
-        console.log($scope.timepickerEnd)
+        console.log($scope.timepickerBegin);
+        console.log($scope.timepickerEnd);
         $http({
             method: "GET",
             url: "message/queryMessageByTopic.query",
@@ -70,10 +71,10 @@ module.controller('messageController', ['$scope', 'ngDialog', '$http','Notificat
             if (resp.status == 0) {
                 console.log(resp);
                 $scope.queryMessageByTopicResult = resp.data;
-                $scope.changeShowMessageList(1,$scope.queryMessageByTopicResult.length);
+                $scope.changeShowMessageList(1, $scope.queryMessageByTopicResult.length);
                 // todo
                 // console.log($scope.queryMessageByTopicResult);
-            }else {
+            } else {
                 Notification.error({message: resp.errMsg, delay: 2000});
             }
         });
@@ -87,26 +88,26 @@ module.controller('messageController', ['$scope', 'ngDialog', '$http','Notificat
             url: "message/queryMessageByTopicAndKey.query",
             params: {
                 topic: $scope.selectedTopic,
-                key:$scope.key
+                key: $scope.key
             }
         }).success(function (resp) {
             if (resp.status == 0) {
                 console.log(resp);
                 $scope.queryMessageByTopicAndKeyResult = resp.data;
                 console.log($scope.queryMessageByTopicAndKeyResult);
-            }else {
+            } else {
                 Notification.error({message: resp.errMsg, delay: 2000});
             }
         });
     };
 
-    $scope.queryMessageByBrokerAndOffset = function (storeHost,commitLogOffset) {
+    $scope.queryMessageByBrokerAndOffset = function (storeHost, commitLogOffset) {
         $http({
             method: "GET",
             url: "message/viewMessageByBrokerAndOffset.query",
             params: {
                 brokerHost: storeHost.address,
-                port:storeHost.port,
+                port: storeHost.port,
                 offset: commitLogOffset
             }
         }).success(function (resp) {
@@ -123,13 +124,13 @@ module.controller('messageController', ['$scope', 'ngDialog', '$http','Notificat
         });
     };
 
-    $scope.queryMessageByMessageId = function (messageId,topic) {
+    $scope.queryMessageByMessageId = function (messageId, topic) {
         $http({
             method: "GET",
             url: "message/viewMessage.query",
             params: {
                 msgId: messageId,
-                topic:topic
+                topic: topic
             }
         }).success(function (resp) {
             if (resp.status == 0) {
@@ -137,62 +138,63 @@ module.controller('messageController', ['$scope', 'ngDialog', '$http','Notificat
                 ngDialog.open({
                     template: 'messageDetailViewDialog',
                     controller: 'messageDetailViewDialogController',
-                    data:resp.data
+                    data: resp.data
                 });
-            }else {
+            } else {
                 Notification.error({message: resp.errMsg, delay: 2000});
             }
         });
     };
 
 
-    $scope.changeShowMessageList = function (currentPage,totalItem) {
+    $scope.changeShowMessageList = function (currentPage, totalItem) {
         var perPage = $scope.paginationConf.itemsPerPage;
         var from = (currentPage - 1) * perPage;
-        var to = (from + perPage)>totalItem?totalItem:from + perPage;
+        var to = (from + perPage) > totalItem ? totalItem : from + perPage;
         $scope.messageShowList = $scope.queryMessageByTopicResult.slice(from, to);
-        $scope.paginationConf.totalItems = totalItem ;
+        $scope.paginationConf.totalItems = totalItem;
     };
+
 }]);
 
-module.controller('messageDetailViewDialogController',['$scope', 'ngDialog', '$http','Notification', function ($scope, ngDialog, $http,Notification) {
-
-        $scope.resendMessage = function (msgId,topic,consumerGroup) {
+module.controller('messageDetailViewDialogController', ['$scope', 'ngDialog', '$http', 'Notification',
+    function ($scope, ngDialog, $http, Notification) {
+        $scope.resendMessage = function (msgId, topic, consumerGroup) {
             $http({
                 method: "POST",
                 url: "message/consumeMessageDirectly.do",
                 params: {
                     msgId: msgId,
-                    consumerGroup:consumerGroup,
-                    topic:topic
+                    consumerGroup: consumerGroup,
+                    topic: topic
                 }
             }).success(function (resp) {
                 if (resp.status == 0) {
                     ngDialog.open({
                         template: 'operationResultDialog',
-                        data:{
-                            result:resp.data
+                        data: {
+                            result: resp.data
                         }
                     });
                 }
                 else {
                     ngDialog.open({
                         template: 'operationResultDialog',
-                        data:{
-                            result:resp.errMsg
+                        data: {
+                            result: resp.errMsg
                         }
                     });
                 }
             });
         };
         $scope.showExceptionDesc = function (errmsg) {
-            if(errmsg == null){
+            if (errmsg == null) {
                 errmsg = "Don't have Exception"
             }
             ngDialog.open({
                 template: 'operationResultDialog',
-                data:{
-                    result:errmsg
+                data: {
+                    result: errmsg
                 }
             });
         };
