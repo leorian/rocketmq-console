@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 驾驶舱
+ */
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
@@ -46,7 +49,7 @@ public class DashboardController {
         if (Strings.isNullOrEmpty(topicName)) {
             return dashboardService.queryTopicData(date);
         }
-        return dashboardService.queryTopicData(date,topicName);
+        return dashboardService.queryTopicData(date, topicName);
     }
 
     @RequestMapping(value = "/topicCurrent", method = RequestMethod.GET)
