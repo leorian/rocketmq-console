@@ -17,6 +17,7 @@
 package org.apache.rocketmq.console.controller;
 
 import javax.annotation.Resource;
+
 import org.apache.rocketmq.console.service.OpsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 运维
+ */
 @Controller
 @RequestMapping("/ops")
 public class OpsController {
