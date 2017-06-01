@@ -17,6 +17,7 @@
 package org.apache.rocketmq.console.controller;
 
 import javax.annotation.Resource;
+
 import org.apache.rocketmq.console.aspect.admin.annotation.OriginalControllerReturnValue;
 import org.apache.rocketmq.console.service.OpsService;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,11 @@ public class NamesvrController {
     @Resource
     private OpsService opsService;
 
+    /**
+     * rocket-mq注册中心链接信息
+     *
+     * @return
+     */
     @RequestMapping(value = "/nsaddr", method = RequestMethod.GET)
     @ResponseBody
     @OriginalControllerReturnValue
