@@ -15,45 +15,48 @@
  * limitations under the License.
  */
 
-app.controller('opsController', ['$scope','$location','$http','Notification','remoteApi','tools', function ($scope,$location,$http,Notification,remoteApi,tools) {
-    $scope.namesvrAddrList = [];
-    $scope.useVIPChannel = true;
-    $http({
-        method: "GET",
-        url: "ops/homePage.query"
-    }).success(function (resp) {
-        if (resp.status == 0) {
-            $scope.namesvrAddrList = resp.data.namesvrAddrList;
-            $scope.useVIPChannel = resp.data.useVIPChannel
-        }else{
-            Notification.error({message: resp.errMsg, delay: 2000});
-        }
-    });
+app.controller('opsController', ['$scope', '$location', '$http', 'Notification', 'remoteApi', 'tools',
+    function ($scope, $location, $http, Notification, remoteApi, tools) {
+        $scope.namesvrAddrList = [];
+        $scope.useVIPChannel = true;
+        $http({
+            method: "GET",
+            url: "ops/homePage.query"
+        }).success(function (resp) {
+            if (resp.status == 0) {
+                $scope.namesvrAddrList = resp.data.namesvrAddrList;
+                $scope.useVIPChannel = resp.data.useVIPChannel
+            } else {
+                Notification.error({message: resp.errMsg, delay: 2000});
+            }
+        });
 
-    $scope.updateNameSvrAddr = function () {
-        $http({
-            method: "POST",
-            url: "ops/updateNameSvrAddr.do",
-            params:{nameSvrAddrList:$scope.namesvrAddrList.join(";")}
-        }).success(function (resp) {
-            if (resp.status == 0) {
-                Notification.info({message: "SUCCESS", delay: 2000});
-            }else{
-                Notification.error({message: resp.errMsg, delay: 2000});
-            }
-        });
-    };
-    $scope.updateIsVIPChannel = function () {
-        $http({
-            method: "POST",
-            url: "ops/updateIsVIPChannel.do",
-            params:{useVIPChannel:$scope.useVIPChannel}
-        }).success(function (resp) {
-            if (resp.status == 0) {
-                Notification.info({message: "SUCCESS", delay: 2000});
-            }else{
-                Notification.error({message: resp.errMsg, delay: 2000});
-            }
-        });
-    }
-}]);
+        $scope.updateNameSvrAddr = function () {
+            $http({
+                method: "POST",
+                url: "ops/updateNameSvrAddr.do",
+                params: {nameSvrAddrList: $scope.namesvrAddrList.join(";")}
+            }).success(function (resp) {
+                if (resp.status == 0) {
+                    Notification.info({message: "SUCCESS", delay: 2000});
+                } else {
+                    Notification.error({message: resp.errMsg, delay: 2000});
+                }
+            });
+        };
+
+        $scope.updateIsVIPChannel = function () {
+            $http({
+                method: "POST",
+                url: "ops/updateIsVIPChannel.do",
+                params: {useVIPChannel: $scope.useVIPChannel}
+            }).success(function (resp) {
+                if (resp.status == 0) {
+                    Notification.info({message: "SUCCESS", delay: 2000});
+                } else {
+                    Notification.error({message: resp.errMsg, delay: 2000});
+                }
+            });
+        }
+
+    }]);
