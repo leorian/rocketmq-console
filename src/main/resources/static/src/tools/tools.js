@@ -35,10 +35,10 @@ app.service('tools', ['$http', function ($http) {
                             brokerStatus.address = brokerAddrTable[clusterBrokerName].brokerAddrs[index];
                             brokerStatus.brokerName = brokerAddrTable[clusterBrokerName].brokerName;
                             map[clusterName].push(brokerStatus);
-                        })
+                        });
                     }
-                })
-            })
+                });
+            });
         });
         return map;
     };
@@ -47,13 +47,13 @@ app.service('tools', ['$http', function ($http) {
         // temporary holder of position and sort-value
         var map = arrayToSort.map(function (e, i) {
             if (typeof e[propertyToSortWith] === 'string') {
-                return { index: i, value: e[propertyToSortWith].toLowerCase() };
+                return {index: i, value: e[propertyToSortWith].toLowerCase()};
             }
             else {
-                return { index: i, value: e[propertyToSortWith] };
+                return {index: i, value: e[propertyToSortWith]};
             }
 
-        })
+        });
 
         // sorting the map containing the reduced values
         map.sort(function (a, b) {
@@ -70,16 +70,17 @@ app.service('tools', ['$http', function ($http) {
         var result = map.map(function (e) {
             return arrayToSort[e.index];
         });
+
         return result;
     };
 
     return {
-        generateBrokerMap:generateBrokerMap,
-        fastSort:fastSort,
-        ctx:ctx,
-        dashboardRefreshTime:dashboardRefreshTime
+        generateBrokerMap: generateBrokerMap,
+        fastSort: fastSort,
+        ctx: ctx,
+        dashboardRefreshTime: dashboardRefreshTime
     }
-}])
+}]);
 
 
 
