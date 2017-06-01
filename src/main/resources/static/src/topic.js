@@ -50,6 +50,8 @@ module.controller('topicController', ['$scope', 'ngDialog', '$http', 'Notificati
         }
 
     });
+
+    //监听机制
     $scope.filterStr = "";
     $scope.$watch('filterStr', function () {
         $scope.filterList(1);
@@ -63,6 +65,8 @@ module.controller('topicController', ['$scope', 'ngDialog', '$http', 'Notificati
     $scope.$watch('filterDLQ', function () {
         $scope.filterList(1);
     });
+
+    //前端分页显示数据
     $scope.filterList = function (currentPage) {
         var lowExceptStr = $scope.filterStr.toLowerCase();
         var canShowList = [];
@@ -81,6 +85,7 @@ module.controller('topicController', ['$scope', 'ngDialog', '$http', 'Notificati
         $scope.topicShowList = canShowList.slice(from, to);
     };
 
+    //根据类型过滤//普通//重试//死信
     $scope.filterByType = function (str) {
         if ($scope.filterRetry) {
             if (str.startsWith("%R")) {
@@ -100,6 +105,7 @@ module.controller('topicController', ['$scope', 'ngDialog', '$http', 'Notificati
         return false;
     };
 
+    //查询之后分页展示数据
     $scope.showTopicList = function (currentPage, totalItem) {
         if ($scope.filterStr != "") {
             $scope.filterList(currentPage);
