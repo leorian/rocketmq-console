@@ -15,58 +15,60 @@
  * limitations under the License.
  */
 
-app.controller('clusterController', ['$scope','$location','$http','Notification','remoteApi','tools', function ($scope,$location,$http,Notification,remoteApi,tools) {
+app.controller('clusterController', ['$scope', '$location', '$http', 'Notification', 'remoteApi', 'tools', function ($scope, $location, $http, Notification, remoteApi, tools) {
     $scope.clusterMap = {};//cluster:brokerNameList
     $scope.brokerMap = {};//brokerName:{id:addr}
     $scope.brokerDetail = {};//{brokerName,id:detail}
     $scope.clusterNames = [];
     $scope.selectedCluster = "";
+
+    //回调机制
     var callback = function (resp) {
         if (resp.status == 0) {
             $scope.clusterMap = resp.data.clusterInfo.clusterAddrTable;
             $scope.brokerMap = resp.data.clusterInfo.brokerAddrTable;
             $scope.brokerDetail = resp.data.brokerServer;
-            $.each($scope.clusterMap,function(clusterName,clusterBrokersNames){
+            $.each($scope.clusterMap, function (clusterName, clusterBrokersNames) {
                 $scope.clusterNames.push(clusterName);
             });
             if ($scope.clusterNames.length > 0) {
                 $scope.selectedCluster = $scope.clusterNames[0];
             }
-            $scope.brokers = tools.generateBrokerMap($scope.brokerDetail,$scope.clusterMap,$scope.brokerMap);
+            $scope.brokers = tools.generateBrokerMap($scope.brokerDetail, $scope.clusterMap, $scope.brokerMap);
             $scope.switchCluster();
-        }else{
+        } else {
             Notification.error({message: resp.errMsg, delay: 2000});
         }
-    }
+    };
 
     remoteApi.queryClusterList(callback);
 
-    $scope.switchCluster = function(){
+    $scope.switchCluster = function () {
         $scope.instances = $scope.brokers[$scope.selectedCluster];
-    }
+    };
 
-    $scope.showDetail = function (brokerName,index) {
+    $scope.showDetail = function (brokerName, index) {
         $scope.detail = $scope.brokerDetail[brokerName][index];
         $scope.brokerName = brokerName;
         $scope.index = index;
         $(".brokerModal").modal();
-    }
+    };
 
-    $scope.showConfig = function (brokerAddr,brokerName,index) {
+    $scope.showConfig = function (brokerAddr, brokerName, index) {
         $scope.brokerAddr = brokerAddr;
         $scope.brokerName = brokerName;
         $scope.index = index;
         $http({
             method: "GET",
             url: "cluster/brokerConfig.query",
-            params:{brokerAddr:brokerAddr}
+            params: {brokerAddr: brokerAddr}
         }).success(function (resp) {
             if (resp.status == 0) {
                 $scope.brokerConfig = resp.data;
                 $(".configModal").modal();
-            }else{
+            } else {
                 Notification.error({message: resp.errMsg, delay: 2000});
             }
-        })
-    }
-}])
+        });
+    };
+}]);
