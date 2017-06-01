@@ -348,6 +348,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
     $scope.barChart.showLoading();
     remoteApi.queryClusterList(callback);
 
+    //回调机制
     $scope.topicBarChart.showLoading();
     remoteApi.queryTopicCurrentData(function(resp){
         $scope.topicBarChart.hideLoading();
@@ -357,7 +358,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 var firstTotalMsg = parseFloat(first.split(",")[1]);
                 var lastTotalMsg = parseFloat(last.split(",")[1]);
                 return lastTotalMsg-firstTotalMsg;
-            })
+            });
 
             var xAxisData = [];
             var data = [];
@@ -367,7 +368,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 if(!angular.isDefined($scope.selectedTopic)){
                     $scope.selectedTopic = currentArray[0];
                 }
-            })
+            });
             $.each(topicList,function (i, currentData) {
                 if(i > 9){
                     return false;
@@ -375,7 +376,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 var currentArray = currentData.split(",");
                 xAxisData.push(currentArray[0]);
                 data.push(currentArray[1]);
-            })
+            });
             // 指定图表的配置项和数据
             var option = {
                 xAxis: {
@@ -407,7 +408,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
         }else{
             Notification.error({message: resp.errMsg, delay: 2000});
         }
-    })
+    });
 
 
     var getBrokerLineChart = function(legend,data){
@@ -426,7 +427,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                     xAxisData.push($filter('date')(tpsArray[0], "HH:mm:ss"));
                 }
                 _tps.push(tpsArray[1]);
-            })
+            });
             flag = false;
             var _series = {
                 name:key,
@@ -435,10 +436,10 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 symbol: 'none',
                 sampling: 'average',
                 data: _tps
-            }
+            };
             series.push(_series);
             i++
-        })
+        });
 
         var option = {
             legend: {
@@ -453,7 +454,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
             series: series
         };
         return option;
-    }
+    };
 
     var getTopicLineChart = function(legend,data){
         var series = [];
@@ -468,7 +469,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                     xAxisData.push($filter('date')(tpsArray[0], "HH:mm:ss"));
                 }
                 _tps.push(tpsArray[3]);
-            })
+            });
             flag = false;
             var _series = {
                 name:key,
@@ -477,10 +478,10 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 symbol: 'none',
                 sampling: 'average',
                 data: _tps
-            }
+            };
             series.push(_series);
             i++
-        })
+        });
 
         var option = {
             baseOption:{
@@ -506,7 +507,7 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
 
         };
         return option;
-    }
+    };
 
 
     var queryLineData = function () {
@@ -520,17 +521,17 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
         remoteApi.queryBrokerHisData(_date,function(resp){
             // $scope.lineChart.hideLoading();
             if (resp.status == 0) {
-                var _data = {}
+                var _data = {};
                 var _xAxisData = [];
                 $.each(resp.data,function(address,values){
                     _data[address] = values;
                     _xAxisData.push(address);
-                })
+                });
                 $scope.lineChart.setOption(getBrokerLineChart(_xAxisData,_data));
             }else{
                 Notification.error({message: "" + resp.errMsg, delay: 2000});
             }
-        })
+        });
 
         $scope.topicLineChart.showLoading();
         remoteApi.queryTopicHisData(_date,$scope.selectedTopic,function (resp) {
@@ -544,9 +545,9 @@ app.controller('dashboardCtrl', ['$scope','$rootScope','$translate','$filter','N
                 Notification.error({message: "" + resp.errMsg, delay: 2000});
             }
 
-        })
+        });
 
-    }
+    };
 
     //router after will clear this thread
     $rootScope._thread = setInterval( queryLineData, tools.dashboardRefreshTime);
