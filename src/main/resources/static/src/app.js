@@ -154,7 +154,7 @@ app.config(['$routeProvider', '$httpProvider', '$cookiesProvider', 'getDictNameP
 
         $translateProvider.translations('en', en);
         $translateProvider.translations('zh', zh);
-        $translateProvider.preferredLanguage('en');
+        $translateProvider.preferredLanguage('zh');
         $translateProvider.useCookieStorage();
 //        $translateProvider.useSanitizeValueStrategy('sanitize');
 
